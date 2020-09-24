@@ -1,6 +1,6 @@
 'use strict';
 
-const COMMENTS_TEMPLATE = [
+const COMMENTS_LIST = [
   `Всё отлично!`,
   `В целом всё неплохо. Но не всё.`,
   `Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.`,
@@ -24,6 +24,11 @@ const LIKES_MIN = 15;
 const LIKES_MAX = 200;
 const PHOTOS_COUNT = 25;
 
+let listOfPhotos = document.querySelector(`.pictures`);
+
+const picturesTemplate = document.querySelector(`#picture`).content;
+
+
 const randomGenerator = function (length) {
   return Math.floor(Math.random() * Math.floor(length));
 };
@@ -43,13 +48,13 @@ const getPhoto = function (urlNumber) {
 
   // Собираем блок комментариев
   for (let i = 0; i <= commentsCount; i++) {
-    let commentNumber = COMMENTS_MIN + randomGenerator(COMMENTS_TEMPLATE.length);
+    let commentNumber = COMMENTS_MIN + randomGenerator(COMMENTS_LIST.length);
 
     // Защита от повторяющихся комментариев
     if (commentNumber === lastCommentNUmber) {
       i--;
     } else {
-      comments.push(COMMENTS_TEMPLATE[commentNumber]);
+      comments.push(COMMENTS_LIST[commentNumber]);
       lastCommentNUmber = commentNumber;
     }
   }
@@ -64,7 +69,7 @@ const getPhoto = function (urlNumber) {
 };
 
 // Генерируем все фото по ТЗ
-const allPhotos = function (photosCount) {
+const getAllPhotos = function (photosCount) {
   let photos = [];
   for (let i = 1; i <= photosCount; i++) {
     photos.push(getPhoto(i));
@@ -72,4 +77,26 @@ const allPhotos = function (photosCount) {
   return photos;
 };
 
-allPhotos(PHOTOS_COUNT);
+// Создание по шаблону одной фотографии
+const displayPicture = function (currentPhoto) {
+  const pictureTemplate = picturesTemplate.querySelector(`.picture`);
+  let picture = pictureTemplate.cloneNode(true);
+
+  const img = picture.querySelector(`.picture__img`);
+  img.src = currentPhoto.url;
+
+  const comments = picture.querySelector(`.picture__comments`);
+  comments.textContent = currentPhoto.comments;
+
+  const likes = picture.querySelector(`.picture__likes`);
+  likes.textContent = currentPhoto.likes;
+
+  return picture;
+};
+
+// Вывод всех фото на сайт
+const allPhotos = getAllPhotos(PHOTOS_COUNT);
+
+for (let photo of allPhotos) {
+  listOfPhotos.appendChild(displayPicture(photo));
+}
