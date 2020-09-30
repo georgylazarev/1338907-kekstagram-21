@@ -25,9 +25,11 @@ const LIKES_MAX = 200;
 const PHOTOS_COUNT = 25;
 
 let listOfPhotos = document.querySelector(`.pictures`);
-
 const picturesTemplate = document.querySelector(`#picture`).content;
-
+const commentsTemplate = document.querySelector(`#comments`).content;
+const commentsList = document.querySelector(`.social__comments`);
+const body = document.querySelector(`body`);
+const bigPicture = document.querySelector(`.big-picture`);
 
 const randomGenerator = function (length) {
   return Math.floor(Math.random() * Math.floor(length));
@@ -96,7 +98,42 @@ const displayPicture = function (currentPhoto) {
 
 // Вывод всех фото на сайт
 const allPhotos = getAllPhotos(PHOTOS_COUNT);
-
-for (let photo of allPhotos) {
+allPhotos.forEach((photo) => {
   listOfPhotos.appendChild(displayPicture(photo));
-}
+});
+
+// Блокируем прокрутку фона
+body.classList.add(`modal-open`);
+// Подставляем в src большой фотографии адрес из массива
+const bigPictureImg = bigPicture.querySelector(`.big-picture__img`).querySelector(`img`);
+bigPictureImg.src = allPhotos[0].url;
+// Меянем количество лайков
+const bigPictureLikesCount = bigPicture.querySelector(`.likes-count`);
+bigPictureLikesCount.textContent = allPhotos[0].likes;
+// Меняем количество комментариев
+const bigPictureCommentsCount = bigPicture.querySelector(`.comments-count`);
+bigPictureCommentsCount.textContent = allPhotos[0].comments.length;
+// Добавляем описание фото
+const bigPictureDescription = bigPicture.querySelector(`.social__caption`);
+bigPictureDescription.textContent = allPhotos[0].description;
+// Прячем количество комментариев
+const socialCommentCount = bigPicture.querySelector(`.social__comment-count`);
+socialCommentCount.classList.add(`hidden`);
+// Прячем блок добавления комментариев
+const commentLoader = bigPicture.querySelector(`.comments-loader`);
+commentLoader.classList.add(`hidden`);
+// Выводим комментарии
+allPhotos[0].comments.forEach((comment) => {
+  const commentTemplate = commentsTemplate.querySelector(`.social__comment`);
+  const singleComment = commentTemplate.cloneNode(true);
+  const avatar = singleComment.querySelector(`img`);
+  const commentText = singleComment.querySelector(`.social__text`);
+
+  avatar.src = `img/avatar-4.svg`;
+  avatar.alt = allPhotos[0].description;
+  commentText.textContent = comment;
+
+  commentsList.appendChild(singleComment);
+});
+// Показываем фото пользователю
+bigPicture.classList.remove(`hidden`);
