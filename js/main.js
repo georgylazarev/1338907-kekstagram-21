@@ -102,38 +102,157 @@ allPhotos.forEach((photo) => {
   listOfPhotos.appendChild(displayPicture(photo));
 });
 
-// Блокируем прокрутку фона
-body.classList.add(`modal-open`);
-// Подставляем в src большой фотографии адрес из массива
-const bigPictureImg = bigPicture.querySelector(`.big-picture__img`).querySelector(`img`);
-bigPictureImg.src = allPhotos[0].url;
-// Меянем количество лайков
-const bigPictureLikesCount = bigPicture.querySelector(`.likes-count`);
-bigPictureLikesCount.textContent = allPhotos[0].likes;
-// Меняем количество комментариев
-const bigPictureCommentsCount = bigPicture.querySelector(`.comments-count`);
-bigPictureCommentsCount.textContent = allPhotos[0].comments.length;
-// Добавляем описание фото
-const bigPictureDescription = bigPicture.querySelector(`.social__caption`);
-bigPictureDescription.textContent = allPhotos[0].description;
-// Прячем количество комментариев
-const socialCommentCount = bigPicture.querySelector(`.social__comment-count`);
-socialCommentCount.classList.add(`hidden`);
-// Прячем блок добавления комментариев
-const commentLoader = bigPicture.querySelector(`.comments-loader`);
-commentLoader.classList.add(`hidden`);
-// Выводим комментарии
-allPhotos[0].comments.forEach((comment) => {
-  const commentTemplate = commentsTemplate.querySelector(`.social__comment`);
-  const singleComment = commentTemplate.cloneNode(true);
-  const avatar = singleComment.querySelector(`img`);
-  const commentText = singleComment.querySelector(`.social__text`);
+// Находим все миниатюры
+const allThumbnails = listOfPhotos.querySelectorAll(`.picture`);
 
-  avatar.src = `img/avatar-4.svg`;
-  avatar.alt = allPhotos[0].description;
-  commentText.textContent = comment;
+// Объявление функции показа большой картинки
+const showBigPhoto = function () {
+  // Блокируем прокрутку фона
+  body.classList.add(`modal-open`);
+  // Подставляем в src большой фотографии адрес из массива
+  const bigPictureImg = bigPicture.querySelector(`.big-picture__img`).querySelector(`img`);
+  bigPictureImg.src = allPhotos[0].url;
+  // Меянем количество лайков
+  const bigPictureLikesCount = bigPicture.querySelector(`.likes-count`);
+  bigPictureLikesCount.textContent = allPhotos[0].likes;
+  // Меняем количество комментариев
+  const bigPictureCommentsCount = bigPicture.querySelector(`.comments-count`);
+  bigPictureCommentsCount.textContent = allPhotos[0].comments.length;
+  // Добавляем описание фото
+  const bigPictureDescription = bigPicture.querySelector(`.social__caption`);
+  bigPictureDescription.textContent = allPhotos[0].description;
+  // Прячем количество комментариев
+  const socialCommentCount = bigPicture.querySelector(`.social__comment-count`);
+  socialCommentCount.classList.add(`hidden`);
+  // Прячем блок добавления комментариев
+  const commentLoader = bigPicture.querySelector(`.comments-loader`);
+  commentLoader.classList.add(`hidden`);
+  // Выводим комментарии
+  allPhotos[0].comments.forEach((comment) => {
+    const commentTemplate = commentsTemplate.querySelector(`.social__comment`);
+    const singleComment = commentTemplate.cloneNode(true);
+    const avatar = singleComment.querySelector(`img`);
+    const commentText = singleComment.querySelector(`.social__text`);
 
-  commentsList.appendChild(singleComment);
+    avatar.src = `img/avatar-4.svg`;
+    avatar.alt = allPhotos[0].description;
+    commentText.textContent = comment;
+
+    commentsList.appendChild(singleComment);
+  });
+  // Показываем фото пользователю
+  bigPicture.classList.remove(`hidden`);
+};
+
+// Вешаем обработчик событий на каждую миниатюру
+for (let thumbNail of allThumbnails) {
+  thumbNail.addEventListener(`click`, showBigPhoto);
+}
+
+// Загрузка фото
+let fileUploader = document.querySelector(`#upload-file`);
+const overlayForm = document.querySelector(`.img-upload__overlay`);
+const closeButton = overlayForm.querySelector(`.img-upload__cancel`);
+const effectsList = overlayForm.querySelectorAll(`.effects__radio`);
+const uploadPreview = overlayForm.querySelector(`.img-upload__preview`).querySelector(`img`);
+const effectLevelSlider = overlayForm.querySelector(`.img-upload__effect-level`);
+const effectLevelLine = effectLevelSlider.querySelector(`.effect-level__line`);
+const effectLevelPin = effectLevelSlider.querySelector(`.effect-level__pin`);
+const effectLevelDepth = effectLevelSlider.querySelector(`.effect-level__depth`);
+
+// Функция закрытия попапа
+const closePopup = function () {
+  fileUploader.value = ``;
+  uploadPreview.removeAttribute(`class`);
+  effectsList[0].checked = true;
+  document.removeEventListener(`keydown`, onPopupEscPress);
+  overlayForm.classList.add(`hidden`);
+  body.classList.remove(`modal-open`);
+};
+
+// Закрытие попапа по нажатию Esc
+const onPopupEscPress = function (evt) {
+  if (evt.key === `Escape`) {
+    evt.preventDefault();
+    closePopup();
+  }
+};
+
+// Изменение фильтра
+const onChangeEffect = function (effect) {
+  if (effect.value === `none`) {
+    uploadPreview.removeAttribute(`class`);
+    effectLevelSlider.classList.add(`hidden`);
+  } else {
+    effectLevelSlider.classList.remove(`hidden`);
+    uploadPreview.removeAttribute(`class`);
+    uploadPreview.classList.add(`effects__preview--` + effect.value);
+    effectLevelPin.style.left = 0;
+    effectLevelDepth.style.width = effectLevelPin.style.left;
+  }
+};
+
+// Перемещение пина эффектов
+effectLevelPin.addEventListener(`mousedown`, function (evt) {
+  evt.preventDefault();
+
+  let startPosition = {
+    x: evt.clientX
+  };
+
+  const onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    let shift = {
+      x: startPosition.x - moveEvt.clientX
+    };
+
+    startPosition = {
+      x: moveEvt.clientX
+    };
+
+    let newPosition = effectLevelPin.offsetLeft - shift.x;
+
+    // Ограничение на минимальное и максимальное значение
+    if (newPosition < 0) {
+      effectLevelPin.style.left = `0`;
+    } else if (newPosition > effectLevelLine.offsetWidth) {
+      effectLevelPin.style.left = effectLevelLine.offsetWidth + `px`;
+    } else {
+      effectLevelPin.style.left = newPosition + `px`;
+    }
+
+    effectLevelDepth.style.width = effectLevelPin.style.left;
+  };
+
+  const onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+
+    let currentLevel = (effectLevelPin.offsetLeft * 100 / effectLevelLine.offsetWidth).toFixed(2);
+    document.removeEventListener(`mousemove`, onMouseMove);
+    document.removeEventListener(`mouseup`, onMouseUp);
+
+    // Возвращаем относительное положение ползунка в процентах до сотых
+    return currentLevel;
+  };
+
+  document.addEventListener(`mousemove`, onMouseMove);
+  document.addEventListener(`mouseup`, onMouseUp);
 });
-// Показываем фото пользователю
-bigPicture.classList.remove(`hidden`);
+
+// Открытие попапа
+fileUploader.onchange = function () {
+  overlayForm.classList.remove(`hidden`);
+  body.classList.add(`modal-open`);
+  // Скрытие слайдера эффектов
+  effectLevelSlider.classList.add(`hidden`);
+  // Обработчик событий на закрытие
+  closeButton.addEventListener(`click`, closePopup);
+  document.addEventListener(`keydown`, onPopupEscPress);
+  // Обработчик событий на выбор фильтра
+  effectsList.forEach((effect) => {
+    effect.addEventListener(`change`, function () {
+      onChangeEffect(effect);
+    });
+  });
+};
