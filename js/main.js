@@ -159,6 +159,7 @@ const MIN_SCALE = 25;
 const SCALE_STEP = 25;
 
 let fileUploader = document.querySelector(`#upload-file`);
+const uploadForm = document.querySelector(`.img-upload__form`);
 const overlayForm = document.querySelector(`.img-upload__overlay`);
 const closeButton = overlayForm.querySelector(`.img-upload__cancel`);
 const effectsList = overlayForm.querySelectorAll(`.effects__radio`);
@@ -167,6 +168,9 @@ const effectLevelSlider = overlayForm.querySelector(`.img-upload__effect-level`)
 const effectLevelLine = effectLevelSlider.querySelector(`.effect-level__line`);
 const effectLevelPin = effectLevelSlider.querySelector(`.effect-level__pin`);
 const effectLevelDepth = effectLevelSlider.querySelector(`.effect-level__depth`);
+let effectLevelValue = effectLevelSlider.querySelector(`.effect-level__value`);
+let hashtagInput = overlayForm.querySelector(`.text__hashtags`);
+
 let effectValue = ``;
 
 const scaleControlSmaller = overlayForm.querySelector(`.scale__control--smaller`);
@@ -191,8 +195,12 @@ const closePopup = function () {
 // Закрытие попапа по нажатию Esc
 const onPopupEscPress = function (evt) {
   if (evt.key === `Escape`) {
-    evt.preventDefault();
-    closePopup();
+    if (!hashtagInput.matches(`:focus`)) {
+      evt.preventDefault();
+      closePopup();
+    } else {
+      evt.preventDefault();
+    }
   }
 };
 
@@ -230,6 +238,7 @@ const onUseEffect = function (effect, level) {
     let brightnessLevel = MIN_BRIGHTNESS_LEVEL + (level / 100 * MAX_BRIGHTNESS_COEFFICIENT);
     uploadPreview.style.filter = `brightness(` + brightnessLevel + `)`;
   }
+  effectLevelValue.value = level;
 };
 
 // Перемещение пина эффектов
@@ -272,8 +281,8 @@ const onPinMove = function (evt) {
     document.removeEventListener(`mousemove`, onMouseMove);
     document.removeEventListener(`mouseup`, onMouseUp);
 
-    // Вычисляем относительное положение ползунка в процентах до сотых
-    let currentLevel = (effectLevelPin.offsetLeft * 100 / effectLevelLine.offsetWidth).toFixed(2);
+    // Вычисляем относительное положение ползунка в процентах
+    let currentLevel = (effectLevelPin.offsetLeft * 100 / effectLevelLine.offsetWidth).toFixed(0);
     // Вызываем функцию применения эффекта
     onUseEffect(effectValue, currentLevel);
   };
@@ -319,3 +328,75 @@ fileUploader.onchange = function () {
   scaleControlSmaller.addEventListener(`click`, onScaleButtonSmallerPress);
   scaleControlBigger.addEventListener(`click`, onScaleButtonBiggerPress);
 };
+
+// Проверка хэштегов на валидность
+const onErrorCheck = function () {
+  // Перегоняем полученное значение в массив и сортируем
+  let hastagArray = hashtagInput.value.split(` `).sort();
+  // Задаем регулярное выражение для проверки тега
+  const re = /^#[\w]{1,19}$/;
+  // Обнуляем счётчик ошибок
+  let errorsCount = 0;
+  // Объявляем переменную для сравнения тегов
+  let tagLeft = ``;
+
+  // Если поле ввода пустое
+  if (!hashtagInput.value) {
+    // Сбрасываем отображение ошибок
+    // Таки образом теги становятся не обязательными
+    hashtagInput.style.boxShadow = `none`;
+    hashtagInput.setCustomValidity(``);
+  } else {
+    // Иначе начинаем проверки
+    // Если в поле более 5 хэштегов
+    if (hastagArray.length > 5) {
+      // Выводим соответствующую ошибку
+      hashtagInput.setCustomValidity(`Может быть не более 5 хэштегов`);
+      errorsCount += 1;
+    } else {
+      // Иначе, проверяем каждый тег
+      hastagArray.forEach((hashTag) => {
+        // Переводим в нижний кейс, чтобы не играл роли регистр
+        hashTag = hashTag.toLowerCase();
+        // Если тег не соответствует регулярке
+        if (!re.test(hashTag)) {
+          // Выводим ошибку
+          hashtagInput.setCustomValidity(`Хештег должен соответсвовать критериям`);
+          errorsCount += 1;
+        // Иначе, если тег совпадает с предыдущим
+        } else if (hashTag === tagLeft) {
+          // Выводим соответствующую ошибку
+          hashtagInput.setCustomValidity(`У вас есть повторяющиеся хэштеги`);
+          errorsCount += 1;
+          tagLeft = hashTag;
+        } else {
+          // Если ошибок нет, отменяем выделение поля красным
+          hashtagInput.style.boxShadow = `none`;
+          tagLeft = hashTag;
+        }
+      });
+    }
+
+    // Проверяем, есть ли хоть одна ошибка в тегах
+    if (errorsCount) {
+      // Если да, подсвечиваем поле красным
+      hashtagInput.style.boxShadow = `0 0 15px red`;
+    } else {
+      // Иначе, убираем подсветку и сообщение
+      hashtagInput.style.boxShadow = `none`;
+      hashtagInput.setCustomValidity(``);
+    }
+    hashtagInput.reportValidity();
+  }
+  return errorsCount;
+};
+
+// Проверяем теги на валидность в процессе набора
+hashtagInput.addEventListener(`input`, function () {
+  onErrorCheck();
+});
+
+// Проверяем теги на валидность перед отправкой формы
+uploadForm.addEventListener(`submit`, function () {
+  onErrorCheck();
+});
