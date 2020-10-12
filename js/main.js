@@ -203,7 +203,7 @@ const changeScale = function (direction) {
     newValue = parseInt(currentValue, 10) - SCALE_STEP;
   }
   scaleControlValue.value = newValue + `%`;
-  uploadPreview.style = `transform: scale(` + newValue / 100 + `)`;
+  uploadPreview.style.transform = `scale(` + newValue / 100 + `)`;
 };
 
 const onScaleButtonSmallerPress = function () {
@@ -285,7 +285,7 @@ const onChangeEffect = function (effect) {
   effectValue = effect.value;
   if (effectValue === `none`) {
     uploadPreview.removeAttribute(`class`);
-    uploadPreview.removeAttribute(`style`);
+    uploadPreview.style.filter = `none`;
     effectLevelSlider.classList.add(`hidden`);
   } else {
     effectLevelSlider.classList.remove(`hidden`);
