@@ -184,6 +184,8 @@ const closePopup = function () {
   scaleControlBigger.removeEventListener(`click`, onScaleButtonBiggerPress);
   overlayForm.classList.add(`hidden`);
   body.classList.remove(`modal-open`);
+  uploadPreview.removeAttribute(`class`);
+  uploadPreview.removeAttribute(`style`);
 };
 
 // Закрытие попапа по нажатию Esc
