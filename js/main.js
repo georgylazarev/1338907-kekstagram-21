@@ -150,6 +150,7 @@ for (let thumbNail of allThumbnails) {
 }
 
 // Загрузка фото
+const MAX_LEVEL = 100;
 let fileUploader = document.querySelector(`#upload-file`);
 const overlayForm = document.querySelector(`.img-upload__overlay`);
 const closeButton = overlayForm.querySelector(`.img-upload__cancel`);
@@ -159,6 +160,7 @@ const effectLevelSlider = overlayForm.querySelector(`.img-upload__effect-level`)
 const effectLevelLine = effectLevelSlider.querySelector(`.effect-level__line`);
 const effectLevelPin = effectLevelSlider.querySelector(`.effect-level__pin`);
 const effectLevelDepth = effectLevelSlider.querySelector(`.effect-level__depth`);
+let effectValue = ``;
 
 // Функция закрытия попапа
 const closePopup = function () {
@@ -176,6 +178,22 @@ const onPopupEscPress = function (evt) {
   if (evt.key === `Escape`) {
     evt.preventDefault();
     closePopup();
+  }
+};
+
+// Применение эффекта
+const onUseEffect = function (effect, level) {
+  if (effect === `chrome`) {
+    uploadPreview.style.filter = `grayscale(` + level / 100 + `)`;
+  } else if (effect === `sepia`) {
+    uploadPreview.style.filter = `sepia(` + level / 100 + `)`;
+  } else if (effect === `marvin`) {
+    uploadPreview.style.filter = `invert(` + level + `%)`;
+  } else if (effect === `phobos`) {
+    uploadPreview.style.filter = `blur(` + level / 100 * 3 + `px)`;
+  } else if (effect === `heat`) {
+    let brightnessLevel = 1 + (level / 100 * 2);
+    uploadPreview.style.filter = `brightness(` + brightnessLevel + `)`;
   }
 };
 
@@ -219,26 +237,28 @@ const onPinMove = function (evt) {
     document.removeEventListener(`mousemove`, onMouseMove);
     document.removeEventListener(`mouseup`, onMouseUp);
 
-    // Возвращаем относительное положение ползунка в процентах до сотых
+    // Вычисляем относительное положение ползунка в процентах до сотых
     let currentLevel = (effectLevelPin.offsetLeft * 100 / effectLevelLine.offsetWidth).toFixed(2);
-    return currentLevel;
+    // Вызываем функцию применения эффекта
+    onUseEffect(effectValue, currentLevel);
   };
 
   document.addEventListener(`mousemove`, onMouseMove);
   document.addEventListener(`mouseup`, onMouseUp);
-
-
 };
 
 // Изменение фильтра
 const onChangeEffect = function (effect) {
-  if (effect.value === `none`) {
+  effectValue = effect.value;
+  if (effectValue === `none`) {
     uploadPreview.removeAttribute(`class`);
+    uploadPreview.removeAttribute(`style`);
     effectLevelSlider.classList.add(`hidden`);
   } else {
     effectLevelSlider.classList.remove(`hidden`);
     uploadPreview.removeAttribute(`class`);
-    uploadPreview.classList.add(`effects__preview--` + effect.value);
+    uploadPreview.classList.add(`effects__preview--` + effectValue);
+    onUseEffect(effectValue, MAX_LEVEL);
     effectLevelPin.style.left = effectLevelLine.offsetWidth + `px`;
     effectLevelDepth.style.width = effectLevelPin.style.left;
     effectLevelPin.addEventListener(`mousedown`, onPinMove);
