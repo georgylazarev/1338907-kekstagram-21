@@ -151,6 +151,13 @@ for (let thumbNail of allThumbnails) {
 
 // Загрузка фото
 const MAX_LEVEL = 100;
+const MIN_BRIGHTNESS_LEVEL = 1;
+const MAX_BRIGHTNESS_COEFFICIENT = 2;
+const MAX_BLUR_COEFFICIENT = 3;
+const MAX_SCALE = 100;
+const MIN_SCALE = 25;
+const SCALE_STEP = 25;
+
 let fileUploader = document.querySelector(`#upload-file`);
 const overlayForm = document.querySelector(`.img-upload__overlay`);
 const closeButton = overlayForm.querySelector(`.img-upload__cancel`);
@@ -162,6 +169,10 @@ const effectLevelPin = effectLevelSlider.querySelector(`.effect-level__pin`);
 const effectLevelDepth = effectLevelSlider.querySelector(`.effect-level__depth`);
 let effectValue = ``;
 
+const scaleControlSmaller = overlayForm.querySelector(`.scale__control--smaller`);
+const scaleControlBigger = overlayForm.querySelector(`.scale__control--bigger`);
+let scaleControlValue = overlayForm.querySelector(`.scale__control--value`);
+
 // Функция закрытия попапа
 const closePopup = function () {
   fileUploader.value = ``;
@@ -169,6 +180,8 @@ const closePopup = function () {
   effectsList[0].checked = true;
   document.removeEventListener(`keydown`, onPopupEscPress);
   effectLevelPin.removeEventListener(`mousedown`, onPinMove);
+  scaleControlSmaller.removeEventListener(`click`, onScaleButtonSmallerPress);
+  scaleControlBigger.removeEventListener(`click`, onScaleButtonBiggerPress);
   overlayForm.classList.add(`hidden`);
   body.classList.remove(`modal-open`);
 };
@@ -181,6 +194,26 @@ const onPopupEscPress = function (evt) {
   }
 };
 
+const changeScale = function (direction) {
+  let currentValue = scaleControlValue.value.substring(0, scaleControlValue.value.length - 1);
+  let newValue = currentValue;
+  if (direction === `bigger` && newValue < MAX_SCALE) {
+    newValue = parseInt(currentValue, 10) + SCALE_STEP;
+  } else if (direction === `smaller` && newValue > MIN_SCALE) {
+    newValue = parseInt(currentValue, 10) - SCALE_STEP;
+  }
+  scaleControlValue.value = newValue + `%`;
+  uploadPreview.style = `transform: scale(` + newValue / 100 + `)`;
+};
+
+const onScaleButtonSmallerPress = function () {
+  changeScale(`smaller`);
+};
+
+const onScaleButtonBiggerPress = function () {
+  changeScale(`bigger`);
+};
+
 // Применение эффекта
 const onUseEffect = function (effect, level) {
   if (effect === `chrome`) {
@@ -190,9 +223,9 @@ const onUseEffect = function (effect, level) {
   } else if (effect === `marvin`) {
     uploadPreview.style.filter = `invert(` + level + `%)`;
   } else if (effect === `phobos`) {
-    uploadPreview.style.filter = `blur(` + level / 100 * 3 + `px)`;
+    uploadPreview.style.filter = `blur(` + level / 100 * MAX_BLUR_COEFFICIENT + `px)`;
   } else if (effect === `heat`) {
-    let brightnessLevel = 1 + (level / 100 * 2);
+    let brightnessLevel = MIN_BRIGHTNESS_LEVEL + (level / 100 * MAX_BRIGHTNESS_COEFFICIENT);
     uploadPreview.style.filter = `brightness(` + brightnessLevel + `)`;
   }
 };
@@ -280,4 +313,7 @@ fileUploader.onchange = function () {
       onChangeEffect(effect);
     });
   });
+  scaleControlValue.value = MAX_SCALE + `%`;
+  scaleControlSmaller.addEventListener(`click`, onScaleButtonSmallerPress);
+  scaleControlBigger.addEventListener(`click`, onScaleButtonBiggerPress);
 };
