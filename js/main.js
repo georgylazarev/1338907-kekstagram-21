@@ -166,6 +166,7 @@ const closePopup = function () {
   uploadPreview.removeAttribute(`class`);
   effectsList[0].checked = true;
   document.removeEventListener(`keydown`, onPopupEscPress);
+  effectLevelPin.removeEventListener(`mousedown`, onPinMove);
   overlayForm.classList.add(`hidden`);
   body.classList.remove(`modal-open`);
 };
@@ -178,22 +179,8 @@ const onPopupEscPress = function (evt) {
   }
 };
 
-// Изменение фильтра
-const onChangeEffect = function (effect) {
-  if (effect.value === `none`) {
-    uploadPreview.removeAttribute(`class`);
-    effectLevelSlider.classList.add(`hidden`);
-  } else {
-    effectLevelSlider.classList.remove(`hidden`);
-    uploadPreview.removeAttribute(`class`);
-    uploadPreview.classList.add(`effects__preview--` + effect.value);
-    effectLevelPin.style.left = 0;
-    effectLevelDepth.style.width = effectLevelPin.style.left;
-  }
-};
-
 // Перемещение пина эффектов
-effectLevelPin.addEventListener(`mousedown`, function (evt) {
+const onPinMove = function (evt) {
   evt.preventDefault();
 
   let startPosition = {
@@ -222,23 +209,41 @@ effectLevelPin.addEventListener(`mousedown`, function (evt) {
       effectLevelPin.style.left = newPosition + `px`;
     }
 
+    // Заполненная часть полосы перемещения следует за пином
     effectLevelDepth.style.width = effectLevelPin.style.left;
   };
 
   const onMouseUp = function (upEvt) {
     upEvt.preventDefault();
 
-    let currentLevel = (effectLevelPin.offsetLeft * 100 / effectLevelLine.offsetWidth).toFixed(2);
     document.removeEventListener(`mousemove`, onMouseMove);
     document.removeEventListener(`mouseup`, onMouseUp);
 
     // Возвращаем относительное положение ползунка в процентах до сотых
+    let currentLevel = (effectLevelPin.offsetLeft * 100 / effectLevelLine.offsetWidth).toFixed(2);
     return currentLevel;
   };
 
   document.addEventListener(`mousemove`, onMouseMove);
   document.addEventListener(`mouseup`, onMouseUp);
-});
+
+
+};
+
+// Изменение фильтра
+const onChangeEffect = function (effect) {
+  if (effect.value === `none`) {
+    uploadPreview.removeAttribute(`class`);
+    effectLevelSlider.classList.add(`hidden`);
+  } else {
+    effectLevelSlider.classList.remove(`hidden`);
+    uploadPreview.removeAttribute(`class`);
+    uploadPreview.classList.add(`effects__preview--` + effect.value);
+    effectLevelPin.style.left = effectLevelLine.offsetWidth + `px`;
+    effectLevelDepth.style.width = effectLevelPin.style.left;
+    effectLevelPin.addEventListener(`mousedown`, onPinMove);
+  }
+};
 
 // Открытие попапа
 fileUploader.onchange = function () {
