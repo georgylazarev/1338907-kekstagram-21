@@ -30,16 +30,15 @@
   // Функция закрытия попапа
   const closePopup = function () {
     fileUploader.value = ``;
-    uploadPreview.removeAttribute(`class`);
     effectsList[0].checked = true;
+    uploadPreview.removeAttribute(`class`);
+    uploadPreview.removeAttribute(`style`);
     document.removeEventListener(`keydown`, onPopupEscPress);
     effectLevelPin.removeEventListener(`mousedown`, onPinMove);
     scaleControlSmaller.removeEventListener(`click`, onScaleButtonSmallerPress);
     scaleControlBigger.removeEventListener(`click`, onScaleButtonBiggerPress);
     overlayForm.classList.add(`hidden`);
     body.classList.remove(`modal-open`);
-    uploadPreview.removeAttribute(`class`);
-    uploadPreview.removeAttribute(`style`);
   };
 
   // Закрытие попапа по нажатию Esc
@@ -67,15 +66,6 @@
     uploadPreview.style.transform = `scale(` + newValue / 100 + `)`;
   };
 
-  // Нажатие на кнопку "Меньше"
-  const onScaleButtonSmallerPress = function () {
-    changeScale(`smaller`);
-  };
-
-  // Нажатие на кнопку "Больше"
-  const onScaleButtonBiggerPress = function () {
-    changeScale(`bigger`);
-  };
 
   // Применение эффекта
   const onUseEffect = function (effect, level) {
@@ -153,6 +143,7 @@
 
   // Открытие попапа
   fileUploader.onchange = function () {
+    scaleControlValue.value = MAX_SCALE + `%`;
     overlayForm.classList.remove(`hidden`);
     body.classList.add(`modal-open`);
     // Скрытие слайдера эффектов
@@ -160,15 +151,14 @@
     // Обработчик событий на закрытие
     closeButton.addEventListener(`click`, closePopup);
     document.addEventListener(`keydown`, onPopupEscPress);
+    scaleControlSmaller.addEventListener(`click`, onScaleButtonSmallerPress);
+    scaleControlBigger.addEventListener(`click`, onScaleButtonBiggerPress);
     // Обработчик событий на выбор фильтра
     effectsList.forEach((effect) => {
       effect.addEventListener(`change`, function () {
         onChangeEffect(effect);
       });
     });
-    scaleControlValue.value = MAX_SCALE + `%`;
-    scaleControlSmaller.addEventListener(`click`, onScaleButtonSmallerPress);
-    scaleControlBigger.addEventListener(`click`, onScaleButtonBiggerPress);
   };
 
   // Проверка хэштегов на валидность
@@ -228,7 +218,16 @@
       }
       hashtagInput.reportValidity();
     }
-    return errorsCount;
+  };
+
+  // Нажатие на кнопку "Меньше"
+  const onScaleButtonSmallerPress = function () {
+    changeScale(`smaller`);
+  };
+
+  // Нажатие на кнопку "Больше"
+  const onScaleButtonBiggerPress = function () {
+    changeScale(`bigger`);
   };
 
   // Проверяем теги на валидность в процессе набора
