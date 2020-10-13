@@ -204,6 +204,7 @@ const onPopupEscPress = function (evt) {
   }
 };
 
+// Функция изменения размера превью
 const changeScale = function (direction) {
   let currentValue = scaleControlValue.value.substring(0, scaleControlValue.value.length - 1);
   let newValue = currentValue;
@@ -216,10 +217,12 @@ const changeScale = function (direction) {
   uploadPreview.style.transform = `scale(` + newValue / 100 + `)`;
 };
 
+// Нажатие на кнопку "Меньше"
 const onScaleButtonSmallerPress = function () {
   changeScale(`smaller`);
 };
 
+// Нажатие на кнопку "Больше"
 const onScaleButtonBiggerPress = function () {
   changeScale(`bigger`);
 };
