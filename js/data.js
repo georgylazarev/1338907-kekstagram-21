@@ -55,6 +55,7 @@
       url: `photos/` + urlNumber + `.jpg`,
       description: author,
       likes: likesCount,
+      commentsCount: lastCommentNUmber,
       comments};
     return singlePhoto;
   };
@@ -75,7 +76,7 @@
     const img = picture.querySelector(`.picture__img`);
     img.src = currentPhoto.url;
     const comments = picture.querySelector(`.picture__comments`);
-    comments.textContent = currentPhoto.comments;
+    comments.textContent = currentPhoto.commentsCount;
     const likes = picture.querySelector(`.picture__likes`);
     likes.textContent = currentPhoto.likes;
     return picture;
