@@ -55,7 +55,7 @@
       url: `photos/` + urlNumber + `.jpg`,
       description: author,
       likes: likesCount,
-      commentsCount: lastCommentNUmber,
+      commentsCount: lastCommentNUmber + 1,
       comments};
     return singlePhoto;
   };
