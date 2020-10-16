@@ -69,9 +69,11 @@
     const img = picture.querySelector(`.picture__img`);
     img.src = currentPhoto.url;
     const comments = picture.querySelector(`.picture__comments`);
-    comments.textContent = currentPhoto.commentsCount;
+    comments.textContent = currentPhoto.comments.length;
     const likes = picture.querySelector(`.picture__likes`);
     likes.textContent = currentPhoto.likes;
+    picture.setAttribute(`data-indexnumber`, currentPhoto.indexnumber);
+    picture.setAttribute(`tabindex`, `0`);
     return picture;
   };
 
