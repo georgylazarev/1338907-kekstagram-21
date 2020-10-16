@@ -31,7 +31,6 @@
   // Создаём одно фото
   const getPhoto = function (urlNumber) {
     let comments = [];
-    let lastCommentNUmber = 0;
     // Генерируем количество лайков
     const likesCount = LIKES_MIN + window.util.randomGenerator(LIKES_MAX);
     // Выбираем случайного автора
@@ -41,21 +40,15 @@
     const commentsCount = window.util.randomGenerator(COMMENTS_MAX);
     // Собираем блок комментариев
     for (let i = 0; i <= commentsCount; i++) {
-      let commentNumber = COMMENTS_MIN + window.util.randomGenerator(COMMENTS_LIST.length);
-      // Защита от повторяющихся комментариев
-      if (commentNumber === lastCommentNUmber) {
-        i--;
-      } else {
-        comments.push(COMMENTS_LIST[commentNumber]);
-        lastCommentNUmber = commentNumber;
-      }
+      let commentNumber = COMMENTS_MIN + window.util.randomGenerator(COMMENTS_LIST.length - 1);
+      comments.push(COMMENTS_LIST[commentNumber]);
     }
     // Собираем объект фото
     let singlePhoto = {
+      indexnumber: urlNumber,
       url: `photos/` + urlNumber + `.jpg`,
       description: author,
       likes: likesCount,
-      commentsCount: lastCommentNUmber + 1,
       comments};
     return singlePhoto;
   };
