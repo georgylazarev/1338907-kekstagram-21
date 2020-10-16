@@ -17,6 +17,7 @@
   const effectsList = overlayForm.querySelectorAll(`.effects__radio`);
   const uploadPreview = overlayForm.querySelector(`.img-upload__preview`).querySelector(`img`);
   const hashtagInput = overlayForm.querySelector(`.text__hashtags`);
+  const commentInput = overlayForm.querySelector(`.text__description`);
   const scaleControlSmaller = overlayForm.querySelector(`.scale__control--smaller`);
   const scaleControlBigger = overlayForm.querySelector(`.scale__control--bigger`);
   const scaleControlValue = overlayForm.querySelector(`.scale__control--value`);
@@ -44,11 +45,11 @@
   // Закрытие попапа по нажатию Esc
   const onPopupEscPress = function (evt) {
     if (evt.key === `Escape`) {
-      if (!hashtagInput.matches(`:focus`)) {
+      if (hashtagInput.matches(`:focus`) || commentInput.matches(`:focus`)) {
         evt.preventDefault();
-        closePopup();
       } else {
         evt.preventDefault();
+        closePopup();
       }
     }
   };
