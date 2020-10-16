@@ -82,4 +82,8 @@
   allPhotos.forEach((photo) => {
     listOfPhotos.appendChild(displayPicture(photo));
   });
+
+  window.data = {
+    allPhotos
+  };
 })();
