@@ -110,15 +110,16 @@
       }
       // Заполненная часть полосы перемещения следует за пином
       effectLevelDepth.style.width = effectLevelPin.style.left;
+
+      // Вычисляем относительное положение ползунка в процентах
+      let currentLevel = (effectLevelPin.offsetLeft * 100 / effectLevelLine.offsetWidth).toFixed(0);
+      // Вызываем функцию применения эффекта
+      onUseEffect(effectValue, currentLevel);
     };
     const onMouseUp = function (upEvt) {
       upEvt.preventDefault();
       document.removeEventListener(`mousemove`, onMouseMove);
       document.removeEventListener(`mouseup`, onMouseUp);
-      // Вычисляем относительное положение ползунка в процентах
-      let currentLevel = (effectLevelPin.offsetLeft * 100 / effectLevelLine.offsetWidth).toFixed(0);
-      // Вызываем функцию применения эффекта
-      onUseEffect(effectValue, currentLevel);
     };
     document.addEventListener(`mousemove`, onMouseMove);
     document.addEventListener(`mouseup`, onMouseUp);
