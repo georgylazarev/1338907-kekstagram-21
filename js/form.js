@@ -163,7 +163,7 @@
   };
 
   // Проверка хэштегов на валидность
-  const onErrorCheck = function () {
+  const onErrorCheckHashtag = function () {
   // Перегоняем полученное значение в массив и сортируем
     let hastagArray = hashtagInput.value.split(` `).sort();
     // Задаем регулярное выражение для проверки тега
@@ -221,6 +221,17 @@
     }
   };
 
+  const onErrorCheckComment = function () {
+    if (commentInput.value.length > 140) {
+      commentInput.style.boxShadow = `0 0 15px red`;
+      commentInput.setCustomValidity(`Длина комментария не может превышать 140 символов`);
+    } else {
+      commentInput.style.boxShadow = `none`;
+      commentInput.setCustomValidity(``);
+    }
+    commentInput.reportValidity();
+  };
+
   // Нажатие на кнопку "Меньше"
   const onScaleButtonSmallerPress = function () {
     changeScale(`smaller`);
@@ -233,11 +244,17 @@
 
   // Проверяем теги на валидность в процессе набора
   hashtagInput.addEventListener(`input`, function () {
-    onErrorCheck();
+    onErrorCheckHashtag();
   });
 
-  // Проверяем теги на валидность перед отправкой формы
+  // Проверяем комментарии на валидность в процессе набора
+  commentInput.addEventListener(`input`, function () {
+    onErrorCheckComment();
+  });
+
+  // Проверяем комментарии и теги на валидность перед отправкой формы
   uploadForm.addEventListener(`submit`, function () {
-    onErrorCheck();
+    onErrorCheckHashtag();
+    onErrorCheckComment();
   });
 })();
