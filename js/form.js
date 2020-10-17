@@ -17,6 +17,7 @@
   const effectsList = overlayForm.querySelectorAll(`.effects__radio`);
   const uploadPreview = overlayForm.querySelector(`.img-upload__preview`).querySelector(`img`);
   const hashtagInput = overlayForm.querySelector(`.text__hashtags`);
+  const commentInput = overlayForm.querySelector(`.text__description`);
   const scaleControlSmaller = overlayForm.querySelector(`.scale__control--smaller`);
   const scaleControlBigger = overlayForm.querySelector(`.scale__control--bigger`);
   const scaleControlValue = overlayForm.querySelector(`.scale__control--value`);
@@ -44,11 +45,11 @@
   // Закрытие попапа по нажатию Esc
   const onPopupEscPress = function (evt) {
     if (evt.key === `Escape`) {
-      if (!hashtagInput.matches(`:focus`)) {
+      if (hashtagInput.matches(`:focus`) || commentInput.matches(`:focus`)) {
         evt.preventDefault();
-        closePopup();
       } else {
         evt.preventDefault();
+        closePopup();
       }
     }
   };
@@ -109,15 +110,16 @@
       }
       // Заполненная часть полосы перемещения следует за пином
       effectLevelDepth.style.width = effectLevelPin.style.left;
+
+      // Вычисляем относительное положение ползунка в процентах
+      let currentLevel = (effectLevelPin.offsetLeft * 100 / effectLevelLine.offsetWidth).toFixed(0);
+      // Вызываем функцию применения эффекта
+      onUseEffect(effectValue, currentLevel);
     };
     const onMouseUp = function (upEvt) {
       upEvt.preventDefault();
       document.removeEventListener(`mousemove`, onMouseMove);
       document.removeEventListener(`mouseup`, onMouseUp);
-      // Вычисляем относительное положение ползунка в процентах
-      let currentLevel = (effectLevelPin.offsetLeft * 100 / effectLevelLine.offsetWidth).toFixed(0);
-      // Вызываем функцию применения эффекта
-      onUseEffect(effectValue, currentLevel);
     };
     document.addEventListener(`mousemove`, onMouseMove);
     document.addEventListener(`mouseup`, onMouseUp);
@@ -162,7 +164,7 @@
   };
 
   // Проверка хэштегов на валидность
-  const onErrorCheck = function () {
+  const onErrorCheckHashtag = function () {
   // Перегоняем полученное значение в массив и сортируем
     let hastagArray = hashtagInput.value.split(` `).sort();
     // Задаем регулярное выражение для проверки тега
@@ -220,6 +222,17 @@
     }
   };
 
+  const onErrorCheckComment = function () {
+    if (commentInput.value.length > 140) {
+      commentInput.style.boxShadow = `0 0 15px red`;
+      commentInput.setCustomValidity(`Длина комментария не может превышать 140 символов`);
+    } else {
+      commentInput.style.boxShadow = `none`;
+      commentInput.setCustomValidity(``);
+    }
+    commentInput.reportValidity();
+  };
+
   // Нажатие на кнопку "Меньше"
   const onScaleButtonSmallerPress = function () {
     changeScale(`smaller`);
@@ -232,11 +245,17 @@
 
   // Проверяем теги на валидность в процессе набора
   hashtagInput.addEventListener(`input`, function () {
-    onErrorCheck();
+    onErrorCheckHashtag();
   });
 
-  // Проверяем теги на валидность перед отправкой формы
+  // Проверяем комментарии на валидность в процессе набора
+  commentInput.addEventListener(`input`, function () {
+    onErrorCheckComment();
+  });
+
+  // Проверяем комментарии и теги на валидность перед отправкой формы
   uploadForm.addEventListener(`submit`, function () {
-    onErrorCheck();
+    onErrorCheckHashtag();
+    onErrorCheckComment();
   });
 })();
