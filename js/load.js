@@ -1,6 +1,6 @@
 'use strict';
 
-const MAX_REQUEST_TIMEOUT = 3000;
+const MAX_REQUEST_TIMEOUT = 10000;
 
 (function () {
   window.load = function (url, onSuccess, onError) {

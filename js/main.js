@@ -1,7 +1,12 @@
 'use strict';
 
 const onError = function (message) {
-  console.error(message);
+  const errorBlock = document.createElement(`div`);
+  const errorContent = document.createTextNode(message);
+  errorBlock.setAttribute(`style`, `position: absolute; width: 100%; top: 10px; color: red; background: white; text-align: center; padding: 10px 0;`);
+  errorBlock.appendChild(errorContent);
+  const currentDiv = document.querySelector(`main`);
+  document.body.insertBefore(errorBlock, currentDiv);
 };
 
 const onSuccess = function (data) {
