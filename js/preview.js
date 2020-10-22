@@ -7,6 +7,7 @@
   const commentsCount = bigPicture.querySelector(`.comments-count`);
   const likesCount = bigPicture.querySelector(`.likes-count`);
   const closeButton = bigPicture.querySelector(`.big-picture__cancel`);
+  const socialCaption = bigPicture.querySelector(`.social__caption`);
   const commentsList = bigPicture.querySelector(`.social__comments`);
   const commentTemplate = document.querySelector(`#comments`).content;
 
@@ -31,8 +32,9 @@
       let currentComment = commentTemplate.cloneNode(true);
       let currentCommentImg = currentComment.querySelector(`.social__picture`);
       let currentCommentText = currentComment.querySelector(`.social__text`);
-      currentCommentImg.src = `img/avatar-` + (window.util.randomGenerator(4) + 1) + `.svg`;
-      currentCommentText.textContent = comment;
+      currentCommentImg.src = comment.avatar;
+      currentCommentImg.alt = comment.name;
+      currentCommentText.textContent = comment.message;
       commentsList.appendChild(currentComment);
     });
   };
@@ -41,12 +43,13 @@
   // Объявление функции показа большой картинки
     showBigPhoto(thumbnail) {
       // Находим в массиве данные об этой фотографии
-      const indexNumber = thumbnail.dataset.indexnumber - 1;
-      const currentPhotoAllInfo = window.data.allPhotos[indexNumber];
+      const indexNumber = thumbnail.dataset.indexnumber;
+      const currentPhotoAllInfo = window.allPhotos.data[indexNumber];
       // Подставляем в src большой фотографии адрес
       bigPictureImg.src = currentPhotoAllInfo.url;
       // Подставляем количество лайков
       likesCount.textContent = currentPhotoAllInfo.likes;
+      socialCaption.textContent = currentPhotoAllInfo.description;
       // Подставляем количество комментариев
       commentsList.innerHTML = ``;
       commentsCount.textContent = currentPhotoAllInfo.comments.length;
