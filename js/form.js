@@ -29,7 +29,7 @@
   let effectValue = ``;
 
   // Функция закрытия попапа
-  const closePopup = function () {
+  window.closePopup = function () {
     fileUploader.value = ``;
     effectsList[0].checked = true;
     uploadPreview.removeAttribute(`class`);
@@ -40,6 +40,8 @@
     scaleControlBigger.removeEventListener(`click`, onScaleButtonBiggerPress);
     overlayForm.classList.add(`hidden`);
     body.classList.remove(`modal-open`);
+    commentInput.value = ``;
+    hashtagInput.value = ``;
   };
 
   // Закрытие попапа по нажатию Esc
@@ -49,7 +51,7 @@
         evt.preventDefault();
       } else {
         evt.preventDefault();
-        closePopup();
+        window.closePopup();
       }
     }
   };
@@ -151,7 +153,7 @@
     // Скрытие слайдера эффектов
     effectLevelSlider.classList.add(`hidden`);
     // Обработчик событий на закрытие
-    closeButton.addEventListener(`click`, closePopup);
+    closeButton.addEventListener(`click`, window.closePopup);
     document.addEventListener(`keydown`, onPopupEscPress);
     scaleControlSmaller.addEventListener(`click`, onScaleButtonSmallerPress);
     scaleControlBigger.addEventListener(`click`, onScaleButtonBiggerPress);
@@ -254,8 +256,11 @@
   });
 
   // Проверяем комментарии и теги на валидность перед отправкой формы
-  uploadForm.addEventListener(`submit`, function () {
+  uploadForm.addEventListener(`submit`, function (evt) {
+    evt.preventDefault();
     onErrorCheckHashtag();
     onErrorCheckComment();
+    let formData = new FormData(uploadForm);
+    window.upload(`https://21.javascript.pages.academy/kekstagram`, formData);
   });
 })();
