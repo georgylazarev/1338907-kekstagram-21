@@ -8,9 +8,9 @@
     xhr.onreadystatechange = function () {
       if (this.readyState === XMLHttpRequest.DONE) {
         if (this.status === 200) {
-          console.log(`success`);
+          window.main.loadSuccess();
         } else {
-          console.log(`error`);
+          window.main.loadError();
         }
         window.closePopup();
       }
