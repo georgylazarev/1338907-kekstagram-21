@@ -29,19 +29,21 @@
   let effectValue = ``;
 
   // Функция закрытия попапа
-  window.closePopup = function () {
-    fileUploader.value = ``;
-    effectsList[0].checked = true;
-    uploadPreview.removeAttribute(`class`);
-    uploadPreview.removeAttribute(`style`);
-    document.removeEventListener(`keydown`, onPopupEscPress);
-    effectLevelPin.removeEventListener(`mousedown`, onPinMove);
-    scaleControlSmaller.removeEventListener(`click`, onScaleButtonSmallerPress);
-    scaleControlBigger.removeEventListener(`click`, onScaleButtonBiggerPress);
-    overlayForm.classList.add(`hidden`);
-    body.classList.remove(`modal-open`);
-    commentInput.value = ``;
-    hashtagInput.value = ``;
+  window.form = {
+    closePopup() {
+      fileUploader.value = ``;
+      effectsList[0].checked = true;
+      uploadPreview.removeAttribute(`class`);
+      uploadPreview.removeAttribute(`style`);
+      document.removeEventListener(`keydown`, onPopupEscPress);
+      effectLevelPin.removeEventListener(`mousedown`, onPinMove);
+      scaleControlSmaller.removeEventListener(`click`, onScaleButtonSmallerPress);
+      scaleControlBigger.removeEventListener(`click`, onScaleButtonBiggerPress);
+      overlayForm.classList.add(`hidden`);
+      body.classList.remove(`modal-open`);
+      commentInput.value = ``;
+      hashtagInput.value = ``;
+    }
   };
 
   // Закрытие попапа по нажатию Esc
@@ -51,7 +53,7 @@
         evt.preventDefault();
       } else {
         evt.preventDefault();
-        window.closePopup();
+        window.form.closePopup();
       }
     }
   };
@@ -153,7 +155,7 @@
     // Скрытие слайдера эффектов
     effectLevelSlider.classList.add(`hidden`);
     // Обработчик событий на закрытие
-    closeButton.addEventListener(`click`, window.closePopup);
+    closeButton.addEventListener(`click`, window.form.closePopup);
     document.addEventListener(`keydown`, onPopupEscPress);
     scaleControlSmaller.addEventListener(`click`, onScaleButtonSmallerPress);
     scaleControlBigger.addEventListener(`click`, onScaleButtonBiggerPress);
