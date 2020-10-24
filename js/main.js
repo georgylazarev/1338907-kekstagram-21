@@ -28,3 +28,12 @@ const onSuccess = function (data) {
 };
 
 window.load(`https://21.javascript.pages.academy/kekstagram/data`, onSuccess, onError);
+
+window.main = {
+  loadSuccess() {
+    window.util.onShowMessage(`success`);
+  },
+  loadError() {
+    window.util.onShowMessage(`error`);
+  }
+};
