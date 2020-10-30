@@ -2,6 +2,7 @@
 
 (function () {
   const picturesTemplate = document.querySelector(`#picture`);
+  const imgFilters = document.querySelector(`.img-filters`);
 
   window.onLoadData = {
     displayPicture(item, i) {
@@ -15,6 +16,7 @@
       likesCount.textContent = item.likes;
       picture.setAttribute(`data-indexnumber`, i);
       picture.setAttribute(`tabindex`, 0);
+      imgFilters.classList.remove(`img-filters--inactive`);
       return picture;
     }
   };
