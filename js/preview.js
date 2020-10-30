@@ -41,10 +41,10 @@
 
   window.preview = {
   // Объявление функции показа большой картинки
-    showBigPhoto(thumbnail) {
+    showBigPhoto(thumbnail, data) {
       // Находим в массиве данные об этой фотографии
       const indexNumber = thumbnail.dataset.indexnumber;
-      const currentPhotoAllInfo = window.allPhotos.data[indexNumber];
+      const currentPhotoAllInfo = data[indexNumber];
       // Подставляем в src большой фотографии адрес
       bigPictureImg.src = currentPhotoAllInfo.url;
       // Подставляем количество лайков
