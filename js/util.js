@@ -2,9 +2,6 @@
 
 (function () {
   window.util = {
-    randomGenerator(length) {
-      return Math.floor(Math.random() * Math.floor(length));
-    },
     onShowMessage(type) {
       const main = document.querySelector(`main`);
       const messageTemplate = document.querySelector(`#` + type).content;
