@@ -1,10 +1,14 @@
 'use strict';
 
 (function () {
+  const MAX_RANDOM_PREVIEW = 11;
+  const DEBOUNCE_INTERVAL = 500; // ms
+
   const filterButtons = document.querySelectorAll(`.img-filters__button`);
   const imgFilters = document.querySelector(`.img-filters`);
   let listOfPhotos = document.querySelector(`.pictures`);
-  let cloneArray = [];
+  let lastTimeout;
+
 
   const removeClassActive = function () {
     filterButtons.forEach((button) => {
@@ -19,35 +23,36 @@
     });
   };
 
+  const showPhotos = function (array, max) {
+    for (let i = 0; i < max; i++) {
+      listOfPhotos.appendChild(window.data.displayPreview(array[i], i));
+    }
+  };
+
   const onFilter = function (filter) {
+    let cloneArray = [];
     removeClassActive();
     filter.classList.add(`img-filters__button--active`);
     erisePhotos();
-
     switch (filter.id) {
       case `filter-default`:
         cloneArray = window.allPhotos.data;
-        cloneArray.forEach((item, i) => {
-          listOfPhotos.appendChild(window.onLoadData.displayPicture(item, i));
-        });
+        showPhotos(cloneArray, cloneArray.length);
         break;
       case `filter-random`:
         cloneArray = window.allPhotos.data.slice();
         cloneArray = window.util.shuffle(cloneArray);
-        for (let i = 0; i <= 10; i++) {
-          listOfPhotos.appendChild(window.onLoadData.displayPicture(cloneArray[i], i));
-        }
+        showPhotos(cloneArray, MAX_RANDOM_PREVIEW);
         break;
       case `filter-discussed`:
         cloneArray = window.allPhotos.data.slice();
         cloneArray.sort(function (a, b) {
           return b.comments.length - a.comments.length;
         });
-        cloneArray.forEach((item, i) => {
-          listOfPhotos.appendChild(window.onLoadData.displayPicture(item, i));
-        });
+        showPhotos(cloneArray, cloneArray.length);
         break;
     }
+    window.main.setThumbnailsEvent(cloneArray);
   };
 
   window.filter = {
@@ -55,8 +60,12 @@
       imgFilters.classList.remove(`img-filters--inactive`);
       filterButtons.forEach((filterButton) => {
         filterButton.addEventListener(`click`, function () {
-          onFilter(filterButton);
-          window.main.setThumbnailsEvent(cloneArray);
+          if (lastTimeout) {
+            window.clearTimeout(lastTimeout);
+          }
+          lastTimeout = window.setTimeout(function () {
+            onFilter(filterButton);
+          }, DEBOUNCE_INTERVAL);
         });
       });
     }
