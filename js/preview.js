@@ -39,28 +39,20 @@
     });
   };
 
-  window.preview = {
-  // Объявление функции показа большой картинки
-    showBigPhoto(thumbnail) {
-      // Находим в массиве данные об этой фотографии
-      const indexNumber = thumbnail.dataset.indexnumber;
-      const currentPhotoAllInfo = window.allPhotos.data[indexNumber];
-      // Подставляем в src большой фотографии адрес
-      bigPictureImg.src = currentPhotoAllInfo.url;
-      // Подставляем количество лайков
-      likesCount.textContent = currentPhotoAllInfo.likes;
+  window.preview = { // Объявление функции показа большой картинки
+    showBigPhoto(thumbnail, data) {
+      const indexNumber = thumbnail.dataset.indexnumber; // Находим в массиве данные об этой фотографии
+      const currentPhotoAllInfo = data[indexNumber];
+      bigPictureImg.src = currentPhotoAllInfo.url; // Подставляем в src большой фотографии адрес
+      likesCount.textContent = currentPhotoAllInfo.likes; // Подставляем количество лайков
       socialCaption.textContent = currentPhotoAllInfo.description;
-      // Подставляем количество комментариев
       commentsList.innerHTML = ``;
-      commentsCount.textContent = currentPhotoAllInfo.comments.length;
+      commentsCount.textContent = currentPhotoAllInfo.comments.length; // Подставляем количество комментариев
       commentsLoad(currentPhotoAllInfo.comments);
-      // Добавляем обработчики событий на закрытие
-      closeButton.addEventListener(`click`, onCloseBigPicture);
+      closeButton.addEventListener(`click`, onCloseBigPicture); // Добавляем обработчики событий на закрытие
       document.addEventListener(`keydown`, onCloseBigPictureByEsc);
-      // Блокируем прокрутку фона
-      body.classList.add(`modal-open`);
-      // Показываем большую картинку
-      bigPicture.classList.remove(`hidden`);
+      body.classList.add(`modal-open`); // Блокируем прокрутку фона
+      bigPicture.classList.remove(`hidden`); // Показываем большую картинку
     }
   };
 })();
