@@ -13,7 +13,7 @@
   const onSuccess = function (data) {
     let listOfPhotos = document.querySelector(`.pictures`);
     data.forEach((item, i) => {
-      listOfPhotos.appendChild(window.onLoadData.displayPicture(item, i));
+      listOfPhotos.appendChild(window.data.displayPreview(item, i));
     });
     window.filter.onShowFilter();
     window.allPhotos = {
