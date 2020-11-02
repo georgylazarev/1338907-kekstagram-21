@@ -36,6 +36,15 @@
         array[randomIndex] = temporaryValue;
       }
       return array;
+    },
+    maxCheck(maxValue, stepValue) {
+      let result;
+      if (maxValue >= stepValue) {
+        result = stepValue;
+      } else {
+        result = maxValue;
+      }
+      return result;
     }
   };
 })();
