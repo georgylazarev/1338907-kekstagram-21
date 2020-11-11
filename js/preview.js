@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  const COMMENTS_START_INDEX = 0;
+  // const COMMENTS_START_INDEX = 0;
   const COMMENTS_INDEX_STEP = 5;
 
   const body = document.querySelector(`body`);
@@ -12,8 +12,11 @@
   const closeButton = bigPicture.querySelector(`.big-picture__cancel`);
   const socialCaption = bigPicture.querySelector(`.social__caption`);
   const commentsList = bigPicture.querySelector(`.social__comments`);
-  const commentsLoader = bigPicture.querySelector(`.comments-loader`);
+  const socialCommentCount = bigPicture.querySelector(`.social__comment-count`); // Находим блок показа количества комментариев
   const commentTemplate = document.querySelector(`#comments`).content;
+  const commentsLoader = bigPicture.querySelector(`.comments-loader`);
+  let currentCommentIndex = 0;
+  let allData;
 
 
   const onCloseBigPicture = function () { // Объявляем функцию закрытия большой картинки
@@ -22,6 +25,9 @@
     commentsList.innerHTML = null;
     closeButton.removeEventListener(`click`, onCloseBigPicture);
     document.removeEventListener(`keydown`, onCloseBigPictureByEsc);
+    commentsLoader.removeEventListener(`click`, onMoreCommentsButton);
+    currentCommentIndex = 0;
+    commentsLoader.classList.remove(`hidden`);
   };
 
   const onCloseBigPictureByEsc = function (evt) { // Закрытие по нажатию Esc
@@ -46,32 +52,33 @@
       commentsList.appendChild(currentComment); // Выводим комментарий на страницу
     }
 
+    if (endCommentIndex === comments.length) {
+      commentsLoader.classList.add(`hidden`);
+    }
     return endCommentIndex; // Возвращаем последний индекс для последующего вызова
   };
 
   const commentsLoad = function (comments) { // Добавление комментариев
-    const socialCommentCount = bigPicture.querySelector(`.social__comment-count`); // Находим блок показа количества комментариев
-    let currentCommentIndex = onCommentsLoad(comments, COMMENTS_START_INDEX); // Первичный вызов комментариев
+    currentCommentIndex = onCommentsLoad(comments, currentCommentIndex); // Первичный вызов комментариев
     socialCommentCount.textContent = currentCommentIndex + ` из ` + comments.length + ` комментариев`; // Обновляем количество комментариев
+  };
 
-    commentsLoader.addEventListener(`click`, function () { // Показываем комментарии по кнопке
-      currentCommentIndex = onCommentsLoad(comments, currentCommentIndex);
-      socialCommentCount.textContent = currentCommentIndex + ` из ` + comments.length + ` комментариев`;
-    });
+  const onMoreCommentsButton = function () {
+    commentsLoad(allData.comments);
   };
 
   window.preview = { // Объявление функции показа большой картинки
-    showBigPhoto(thumbnail, data) {
-      const indexNumber = thumbnail.dataset.indexnumber; // Находим в массиве данные об этой фотографии
-      const currentPhotoAllInfo = data[indexNumber];
-      bigPictureImg.src = currentPhotoAllInfo.url; // Подставляем в src большой фотографии адрес
-      likesCount.textContent = currentPhotoAllInfo.likes; // Подставляем количество лайков
-      socialCaption.textContent = currentPhotoAllInfo.description;
+    showBigPhoto(data) {
+      allData = data;
+      bigPictureImg.src = allData.url; // Подставляем в src большой фотографии адрес
+      likesCount.textContent = allData.likes; // Подставляем количество лайков
+      socialCaption.textContent = allData.description;
       commentsList.innerHTML = null;
-      commentsCount.textContent = currentPhotoAllInfo.comments.length; // Подставляем количество комментариев
-      commentsLoad(currentPhotoAllInfo.comments);
+      commentsCount.textContent = allData.comments.length; // Подставляем количество комментариев
+      commentsLoad(allData.comments);
       closeButton.addEventListener(`click`, onCloseBigPicture); // Добавляем обработчики событий на закрытие
       document.addEventListener(`keydown`, onCloseBigPictureByEsc);
+      commentsLoader.addEventListener(`click`, onMoreCommentsButton);
       body.classList.add(`modal-open`); // Блокируем прокрутку фона
       bigPicture.classList.remove(`hidden`); // Показываем большую картинку
     }
