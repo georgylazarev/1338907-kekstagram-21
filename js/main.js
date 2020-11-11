@@ -36,7 +36,9 @@
       allThumbnails.forEach((thumbnail) => {
         thumbnail.addEventListener(`click`, function (evt) {
           evt.preventDefault();
-          window.preview.showBigPhoto(thumbnail, data);
+          const indexNumber = thumbnail.dataset.indexnumber; // Находим в массиве данные об этой фотографии
+          const currentPhotoAllInfo = data[indexNumber];
+          window.preview.showBigPhoto(currentPhotoAllInfo);
         });
       });
     }
