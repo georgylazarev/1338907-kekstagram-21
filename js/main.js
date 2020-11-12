@@ -15,7 +15,7 @@
     data.forEach((item, i) => {
       listOfPhotos.appendChild(window.data.displayPreview(item, i));
     });
-    window.filter.onShowFilter();
+    window.filter.show();
     window.allPhotos = {
       data
     };
