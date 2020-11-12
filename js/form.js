@@ -186,9 +186,8 @@
     // Таки образом теги становятся не обязательными
       hashtagInput.style.boxShadow = `none`;
       hashtagInput.setCustomValidity(``);
-    } else {
-    // Иначе начинаем проверки
-    // Если в поле более 5 хэштегов
+    } else { // Начинаем проверки
+      // Если в поле более 5 хэштегов
       if (hastagArray.length > 5) {
       // Выводим соответствующую ошибку
         hashtagInput.setCustomValidity(`Может быть не более 5 хэштегов`);
@@ -196,15 +195,14 @@
       } else {
       // Иначе, проверяем каждый тег
         hastagArray.forEach((hashTag) => {
-        // Переводим в нижний кейс, чтобы не играл роли регистр
+          // Переводим в нижний кейс, чтобы не играл роли регистр
           hashTag = hashTag.toLowerCase();
-          // Если тег не соответствует регулярке
-          if (!re.test(hashTag)) {
+          if (!re.test(hashTag) && hashTag !== ``) { // Если тег не соответствует регулярке
           // Выводим ошибку
             hashtagInput.setCustomValidity(`Хештег должен соответсвовать критериям`);
             errorsCount += 1;
             // Иначе, если тег совпадает с предыдущим
-          } else if (hashTag === tagLeft) {
+          } else if (hashTag === tagLeft && hashTag !== ``) {
           // Выводим соответствующую ошибку
             hashtagInput.setCustomValidity(`У вас есть повторяющиеся хэштеги`);
             errorsCount += 1;
