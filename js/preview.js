@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  // const COMMENTS_START_INDEX = 0;
   const COMMENTS_INDEX_STEP = 5;
 
   const body = document.querySelector(`body`);

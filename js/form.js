@@ -8,6 +8,9 @@
   const MAX_SCALE = 100;
   const MIN_SCALE = 25;
   const SCALE_STEP = 25;
+  const MAX_PERCENT_LEVEL = 100;
+  const MAX_COMMENT_LETTERS_COUNT = 140;
+  const MAX_HASHTAG_COUNT = 5;
 
   const body = document.querySelector(`body`);
   const fileUploader = document.querySelector(`#upload-file`);
@@ -68,22 +71,22 @@
       newValue = parseInt(currentValue, 10) - SCALE_STEP;
     }
     scaleControlValue.value = newValue + `%`;
-    uploadPreview.style.transform = `scale(` + newValue / 100 + `)`;
+    uploadPreview.style.transform = `scale(` + newValue / MAX_PERCENT_LEVEL + `)`;
   };
 
 
   // Применение эффекта
   const onUseEffect = function (effect, level) {
     if (effect === `chrome`) {
-      uploadPreview.style.filter = `grayscale(` + level / 100 + `)`;
+      uploadPreview.style.filter = `grayscale(` + level / MAX_PERCENT_LEVEL + `)`;
     } else if (effect === `sepia`) {
-      uploadPreview.style.filter = `sepia(` + level / 100 + `)`;
+      uploadPreview.style.filter = `sepia(` + level / MAX_PERCENT_LEVEL + `)`;
     } else if (effect === `marvin`) {
       uploadPreview.style.filter = `invert(` + level + `%)`;
     } else if (effect === `phobos`) {
-      uploadPreview.style.filter = `blur(` + level / 100 * MAX_BLUR_COEFFICIENT + `px)`;
+      uploadPreview.style.filter = `blur(` + level / MAX_PERCENT_LEVEL * MAX_BLUR_COEFFICIENT + `px)`;
     } else if (effect === `heat`) {
-      let brightnessLevel = MIN_BRIGHTNESS_LEVEL + (level / 100 * MAX_BRIGHTNESS_COEFFICIENT);
+      let brightnessLevel = MIN_BRIGHTNESS_LEVEL + (level / MAX_PERCENT_LEVEL * MAX_BRIGHTNESS_COEFFICIENT);
       uploadPreview.style.filter = `brightness(` + brightnessLevel + `)`;
     }
     effectLevelValue.value = level;
@@ -116,7 +119,7 @@
       effectLevelDepth.style.width = effectLevelPin.style.left;
 
       // Вычисляем относительное положение ползунка в процентах
-      let currentLevel = (effectLevelPin.offsetLeft * 100 / effectLevelLine.offsetWidth).toFixed(0);
+      let currentLevel = (effectLevelPin.offsetLeft * MAX_PERCENT_LEVEL / effectLevelLine.offsetWidth).toFixed(0);
       // Вызываем функцию применения эффекта
       onUseEffect(effectValue, currentLevel);
     };
@@ -188,7 +191,7 @@
       hashtagInput.setCustomValidity(``);
     } else { // Начинаем проверки
       // Если в поле более 5 хэштегов
-      if (hastagArray.length > 5) {
+      if (hastagArray.length > MAX_HASHTAG_COUNT) {
       // Выводим соответствующую ошибку
         hashtagInput.setCustomValidity(`Может быть не более 5 хэштегов`);
         errorsCount += 1;
@@ -228,7 +231,7 @@
   };
 
   const onErrorCheckComment = function () {
-    if (commentInput.value.length > 140) {
+    if (commentInput.value.length > MAX_COMMENT_LETTERS_COUNT) {
       commentInput.style.boxShadow = `0 0 15px red`;
       commentInput.setCustomValidity(`Длина комментария не может превышать 140 символов`);
     } else {
