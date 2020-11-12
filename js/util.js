@@ -10,18 +10,18 @@
       const showedMessage = document.querySelector(`.` + type);
       const closeMessage = function () {
         main.removeChild(showedMessage);
-        document.removeEventListener(`keydown`, closeMessageByEsc);
+        document.removeEventListener(`keydown`, onMessageCloseByEsc);
       };
       showedMessage.addEventListener(`click`, function () {
         closeMessage();
       });
-      const closeMessageByEsc = function (evt) {
+      const onMessageCloseByEsc = function (evt) {
         evt.preventDefault();
         if (evt.key === `Escape`) {
           closeMessage();
         }
       };
-      document.addEventListener(`keydown`, closeMessageByEsc);
+      document.addEventListener(`keydown`, onMessageCloseByEsc);
     },
     shuffle(array) {
       let currentIndex = array.length;

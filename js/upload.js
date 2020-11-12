@@ -12,7 +12,7 @@
         } else {
           window.main.loadError();
         }
-        window.form.closePopup();
+        window.form.onPopupClose();
       }
     };
 

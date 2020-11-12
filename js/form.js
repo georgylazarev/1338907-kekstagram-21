@@ -33,7 +33,7 @@
 
   // Функция закрытия попапа
   window.form = {
-    closePopup() {
+    onPopupClose() {
       fileUploader.value = ``;
       effectsList[0].checked = true;
       uploadPreview.removeAttribute(`class`);
@@ -56,7 +56,7 @@
         evt.preventDefault();
       } else {
         evt.preventDefault();
-        window.form.closePopup();
+        window.form.onPopupClose();
       }
     }
   };
@@ -158,7 +158,7 @@
     // Скрытие слайдера эффектов
     effectLevelSlider.classList.add(`hidden`);
     // Обработчик событий на закрытие
-    closeButton.addEventListener(`click`, window.form.closePopup);
+    closeButton.addEventListener(`click`, window.form.onPopupClose);
     document.addEventListener(`keydown`, onPopupEscPress);
     scaleControlSmaller.addEventListener(`click`, onScaleButtonSmallerPress);
     scaleControlBigger.addEventListener(`click`, onScaleButtonBiggerPress);
