@@ -263,6 +263,7 @@
     evt.preventDefault();
     onErrorCheckHashtag();
     onErrorCheckComment();
+    hashtagInput.value = hashtagInput.value.replace(/\s+/g, ` `).trim(); // Убраем лишние пробелы
     let formData = new FormData(uploadForm);
     window.upload(`https://21.javascript.pages.academy/kekstagram`, formData);
   });
