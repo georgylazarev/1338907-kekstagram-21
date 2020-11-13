@@ -1,8 +1,8 @@
 'use strict';
 
-const MAX_REQUEST_TIMEOUT = 10000;
-
 (function () {
+  const MAX_REQUEST_TIMEOUT = 10000;
+
   window.load = function (url, onSuccess, onError) {
     const xhr = new XMLHttpRequest();
     xhr.responseType = `json`;
