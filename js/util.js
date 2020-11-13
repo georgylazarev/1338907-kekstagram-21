@@ -23,19 +23,19 @@
       };
       document.addEventListener(`keydown`, onMessageCloseByEsc);
     },
-    shuffle(array) {
-      let currentIndex = array.length;
+    shuffle(elements) {
+      let currentIndex = elements.length;
       let temporaryValue;
       let randomIndex;
 
       while (currentIndex !== 0) {
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex -= 1;
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
+        temporaryValue = elements[currentIndex];
+        elements[currentIndex] = elements[randomIndex];
+        elements[randomIndex] = temporaryValue;
       }
-      return array;
+      return elements;
     },
     maxCheck(maxValue, stepValue) {
       let result;
