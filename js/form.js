@@ -11,6 +11,7 @@
   const MAX_PERCENT_LEVEL = 100;
   const MAX_COMMENT_LETTERS_COUNT = 140;
   const MAX_HASHTAG_COUNT = 5;
+  const ALLOWED_FILE_TYPES = [`image/png`, `image/jpeg`, `image/gif`];
 
   const body = document.querySelector(`body`);
   const fileUploader = document.querySelector(`#upload-file`);
@@ -19,6 +20,7 @@
   const closeButton = overlayForm.querySelector(`.img-upload__cancel`);
   const effectsList = overlayForm.querySelectorAll(`.effects__radio`);
   const uploadPreview = overlayForm.querySelector(`.img-upload__preview`).querySelector(`img`);
+  const uploadPreviewSmall = overlayForm.querySelectorAll(`.effects__preview`);
   const hashtagInput = overlayForm.querySelector(`.text__hashtags`);
   const commentInput = overlayForm.querySelector(`.text__description`);
   const scaleControlSmaller = overlayForm.querySelector(`.scale__control--smaller`);
@@ -150,8 +152,31 @@
     }
   };
 
+  const insertPreview = function () {
+    const file = document.querySelector(`#upload-file`).files[0];
+    const matches = ALLOWED_FILE_TYPES.some(function (it) {
+      return file.type.endsWith(it);
+    });
+
+    if (matches) {
+      const reader = new FileReader();
+
+      reader.addEventListener(`load`, function () {
+        uploadPreview.src = reader.result;
+        uploadPreviewSmall.forEach((smallImg) => {
+          smallImg.style.background = `url(` + reader.result + `)`;
+          smallImg.style.backgroundSize = `contain`;
+          smallImg.style.backgroundRepeat = `no-repeat`;
+        });
+      });
+
+      reader.readAsDataURL(file);
+    }
+  };
+
   // Открытие попапа
   fileUploader.onchange = function () {
+    insertPreview();
     scaleControlValue.value = MAX_SCALE + `%`;
     overlayForm.classList.remove(`hidden`);
     body.classList.add(`modal-open`);
